@@ -23,6 +23,7 @@ if [ ! -f "$PWD/$1".html ]; then
     echo "[WARNING] Have not: set environment variable MYTOOL "$MYTOOL
     exit
   fi
-  awk -f $MYTOOL/$CONTAIN/markdown.awk $PWD/$1 | pandoc -f markdown -t html --template $MYTOOL/$CONTAIN/$TEMPLATE | awk -f $MYTOOL/$CONTAIN/html.awk > "$PWD/$1".html
+  awk -f $MYTOOL/$CONTAIN/markdown.awk $PWD/$1 | pandoc -f markdown -t html --template $MYTOOL/$CONTAIN/$TEMPLATE > "$PWD/$1".html
+  # awk -f $MYTOOL/$CONTAIN/markdown.awk $PWD/$1 | pandoc -f markdown -t html --template $MYTOOL/$CONTAIN/$TEMPLATE | awk -f $MYTOOL/$CONTAIN/html.awk > "$PWD/$1".html
 fi
 firefox "$PWD/$1".html

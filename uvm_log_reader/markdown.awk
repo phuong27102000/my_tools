@@ -11,12 +11,14 @@ BEGIN{
   print "| Severity | Time | Report Handler | Report Object | ID | Message |"
   print "| -- | -- | -- | -- | -- | -- |"
 }
-/^UVM_(INFO|ERROR|WARNING|FATAL).*@/{
+/^UVM_(INFO|ERROR|WARNING|FATAL).* @ /{
   str = $0;
   sub("@"    , " | " , str);
   sub(": "   , " | " , str);
-  sub("@@"   , " | " , str);
-  sub(" \\[" , " | " , str);
+  if (sub("@@"   , " | " , str) == 0)
+    sub(" \\[" , " | | " , str);
+  else
+    sub(" \\[" , " | " , str);
   sub("\\] " , " | " , str);
   print " | "str" | ";
 }

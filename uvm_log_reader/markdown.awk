@@ -11,14 +11,18 @@ BEGIN{
   print "| Severity | Time | Report Handler | Report Object | ID | Message |"
   print "| -- | -- | -- | -- | -- | -- |"
 }
-/^UVM_(INFO|ERROR|WARNING|FATAL).* @ /{
+/^(# )*UVM_(INFO|ERROR|WARNING|FATAL).* @ /{
   str = $0;
-  sub("@"    , " | " , str);
-  sub(": "   , " | " , str);
-  if (sub("@@"   , " | " , str) == 0)
-    sub(" \\[" , " | | " , str);
+  sub("^# ", "", str);                  # Remove hash symbol if have
+  sub("@", " | ", str);                 # Severity | Time
+  sub(": ", " | ", str);                # Time | Report Handler
+  match(str, " \\[.*\\] ", arr);        # Get [ID]
+  id = arr[0];                          # Get [ID]
+  sub(" \\[", " | ", id);               # | ID]
+  sub("\\] ", " | ", id);               # | ID |
+  if (sub("@@", " | ", str) == 0)       # Report Handler | Report Object
+    sub(" \\[.*\\] ", " | "id, str);  # Report Object | ID | Message
   else
-    sub(" \\[" , " | " , str);
-  sub("\\] " , " | " , str);
+    sub(" \\[.*\\] ", id, str);    # Report Object | ID | Message
   print " | "str" | ";
 }

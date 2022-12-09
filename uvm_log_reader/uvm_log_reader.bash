@@ -8,7 +8,7 @@
 
 PWD=$(pwd)
 CONTAIN=uvm_log_reader
-TEMPLATE=easy-pandoc-templates/html/elegant_bootstrap_menu.html
+TEMPLATE=default.html
 
 if [ -f "$PWD/$1".html ]; then
   read -p "--> This process will remove the file \""$PWD"/"$1".html\" ? [y/n] " yn

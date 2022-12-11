@@ -20,7 +20,7 @@ BEGIN{
     else if (i == 4) sub("[0-9]+%","15%",str); # Report Object
     else if (i == 5) sub("[0-9]+%","20%",str); # ID
     else if (i == 6) sub("[0-9]+%","30%",str); # Message
-    file_arr[NR] = str; # print str;
+    file_arr[NR] = str;
     i++;
   }
   else {
@@ -41,17 +41,14 @@ BEGIN{
         sub(">", " style=\"background-color:#000000; color:#ffffff\">", prev)
         if (result < 3) result = 3;
       }
-      # print prev
-      # print curr
       file_arr[NR-1] = prev;
       file_arr[NR] = curr;
     }
-    # else print $0
     else file_arr[NR] = $0
   }
 }
 END{
-  for (idx in file_arr) {
+  for (idx = 1; idx <= NR; idx++) {
     if (result == 3)      sub("UVM LOG SUMMARY","UVM LOG SUMMARY \\&#127384;",file_arr[idx]);
     else if (result == 2) sub("UVM LOG SUMMARY","UVM LOG SUMMARY \\&#10071;",file_arr[idx]);
     else if (result == 1) sub("UVM LOG SUMMARY","UVM LOG SUMMARY \\&#127383;",file_arr[idx]);

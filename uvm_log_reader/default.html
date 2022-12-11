@@ -23,7 +23,7 @@ $endif$
         border-collapse: collapse;
         width: 100%;
       }
-      th, td {
+      td {
         padding: 8px;
         text-align: left;
         border-bottom: 1px solid #DDD;
@@ -36,8 +36,29 @@ $endif$
         border-top: 1px solid #DDD;
         border-left:   1px solid #DDD;
         border-right:  1px solid #DDD;
+        background-color: #1E90FF;
+        color: #F0F8FF;
       }
-      tr:hover {background-color: #D6EEEE;}
+      tr:hover {
+        background-color: #D6EEEE; 
+        color: #00008B;
+      }
+      .uvm_warning_row {
+        background-color:#FFE4B5;
+      }
+      .uvm_error_row {
+        background-color:#B22222; 
+        color:#FAFAD2; 
+        font-weight: bold
+      }
+      .uvm_fatal_row {
+        background-color:#000000; 
+        color:#DEB887; 
+        font-weight: bold
+      }
+      .num_cell {
+        text-align: right;
+      }
 $if(quotes)$
       q { quotes: "“" "”" "‘" "’"; }
 $endif$

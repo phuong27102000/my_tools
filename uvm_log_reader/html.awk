@@ -13,39 +13,42 @@ BEGIN{
 {
   if (match($0, "<col.*[0-9]+%")) {
     str = $0;
-    if (i == 0)      sub("[0-9]+%","3%",str);  # Severity
+    if (i == 0)      sub("[0-9]+%","4%",str);  # Severity
     else if (i == 1) sub("[0-9]+%","10%",str); # File (Line)
-    else if (i == 2) sub("[0-9]+%","12%",str); # Time
+    else if (i == 2) sub("[0-9]+%","6%",str);  # Time
     else if (i == 3) sub("[0-9]+%","10%",str); # Report Handler
-    else if (i == 4) sub("[0-9]+%","15%",str); # Report Object
+    else if (i == 4) sub("[0-9]+%","10%",str); # Report Object
     else if (i == 5) sub("[0-9]+%","20%",str); # ID
-    else if (i == 6) sub("[0-9]+%","30%",str); # Message
+    else if (i == 6) sub("[0-9]+%","40%",str); # Message
     file_arr[NR] = str;
     i++;
   }
-  else {
-    # Highlight UVM_ERROR, UVM_WARNING, UVM_FATAL
-    if (match($0, "^<tr")) {
-      prev = $0;
-      getline;
-      curr = $0
-      if (match(curr, "UVM_ERROR")) {
-        sub(">", " style=\"background-color:#ffcccb\">", prev)
-        if (result < 2) result = 2;
-      }
-      else if (match(curr, "UVM_WARNING")) {
-        sub(">", " style=\"background-color:#e8e8e8\">", prev)
-        if (result < 1) result = 1;
-      }
-      else if (match(curr, "UVM_FATAL")) {
-        sub(">", " style=\"background-color:#000000; color:#ffffff\">", prev)
-        if (result < 3) result = 3;
-      }
-      file_arr[NR-1] = prev;
-      file_arr[NR] = curr;
+  # Highlight UVM_ERROR, UVM_WARNING, UVM_FATAL
+  else if (match($0, "^<tr")) {
+    prev = $0;
+    getline;
+    curr = $0
+    if (match(curr, "UVM_WARNING")) {
+      sub("class=\"", "class=\"uvm_warning_row ", prev);
+      if (result < 1) result = 1;
     }
-    else file_arr[NR] = $0
+    else if (match(curr, "UVM_ERROR")) {
+      sub("class=\"", "class=\"uvm_error_row ", prev);
+      if (result < 2) result = 2;
+    }
+    else if (match(curr, "UVM_FATAL")) {
+      sub("class=\"", "class=\"uvm_fatal_row ", prev);
+      if (result < 3) result = 3;
+    }
+    file_arr[NR-1] = prev;
+    file_arr[NR] = curr;
   }
+  else if (match($0, "^<td>[0-9]+</td>$")) {
+    str = $0;
+    sub(">", " class=\"num_cell\">", str);
+    file_arr[NR] = str;
+  }
+  else file_arr[NR] = $0
 }
 END{
   for (idx = 1; idx <= NR; idx++) {

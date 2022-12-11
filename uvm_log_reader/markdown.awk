@@ -8,7 +8,7 @@
 
 BEGIN{
   print "%UVM LOG SUMMARY"
-  print "| Severity | File (Line) | Time | Report Handler | Report Object | ID | Message |"
+  print "| SEVERITY | FILE (LINE) | TIME | REPORT HANDLER | REPORT OBJECT | ID | MESSAGE |"
   print "| -- | -- | -- | -- | -- | -- | -- |"
 }
 /^(# )*UVM_(INFO|ERROR|WARNING|FATAL).* @ /{

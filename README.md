@@ -1,6 +1,12 @@
 # my_tools
 *Some tools I need for my VLSI career*
-- uvm_log_reader: Read log files printed when verify with UVM.
-  - Should use set UVM_LOG mode for the necessary uvm_report_object
+- Steps to use:
+  - Set environment variable `MYTOOL` as the path to `my_tools` (the folder contains this README file)
+
+###uvm_log_reader
+- Read log files printed when verify with UVM.
+- Recommend using with UVM_LOG mode.
+- Steps to use:
+  - Alias `ulr` as `$MYLOG/uvm_log_reader/uvm_log_reader.bash`
 
 

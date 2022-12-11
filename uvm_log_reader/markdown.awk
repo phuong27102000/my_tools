@@ -7,22 +7,27 @@
 # ==================================================
 
 BEGIN{
-  print "%LOG SUMMARY"
-  print "| Severity | Time | Report Handler | Report Object | ID | Message |"
-  print "| -- | -- | -- | -- | -- | -- |"
+  print "%UVM LOG SUMMARY"
+  print "| Severity | File (Line) | Time | Report Handler | Report Object | ID | Message |"
+  print "| -- | -- | -- | -- | -- | -- | -- |"
 }
 /^(# )*UVM_(INFO|ERROR|WARNING|FATAL).* @ /{
   str = $0;
-  sub("^# ", "", str);                # Remove hash symbol if have
-  sub("@", " | ", str);               # Severity | Time
-  sub(": ", " | ", str);              # Time | Report Handler
-  match(str, " \\[.*\\] ", arr);      # Get [ID]
-  id = arr[0];                        # Get [ID]
-  sub(" \\[", " | ", id);             # | ID]
-  sub("\\] ", " | ", id);             # | ID |
-  if (sub("@@", " | ", str) == 0)     # Report Handler | Report Object
-    sub(" \\[.*\\] ", " | "id, str);  # Report Object | ID | Message
+  sub("^# ", "", str);                                       # Remove hash symbol if have
+  match(str, "^UVM_(INFO|ERROR|WARNING|FATAL) ", arr)        # Get Severity
+  sub("^UVM_(INFO|ERROR|WARNING|FATAL) ", arr[0]" | ", str)  # Severity | File (Line)
+  sub("@", " | ", str);                                      # File (Line) | Time
+  sub(": ", " | ", str);                                     # Time | Report Handler
+  match(str, " \\[.*\\] ", arr);                             # Get [ID]
+  id = arr[0];                                               # Get [ID]
+  sub(" \\[", " | ", id);                                    # | ID]
+  sub("\\] ", " | ", id);                                    # | ID |
+  if (sub("@@", " | ", str) == 0)                            # Report Handler | Report Object
+    sub(" \\[.*\\] ", " | "id, str);                         # Report Object | ID | Message
   else
-    sub(" \\[.*\\] ", id, str);       # Report Object | ID | Message
+    sub(" \\[.*\\] ", id, str);                              # Report Object | ID | Message
+  match(str, "\\|[^\\|]+$", arr);
+  gsub("\\. ", ". <br> ", arr[0]);
+  sub("\\|[^\\|]+$", arr[0], str);
   print " | "str" | ";
 }

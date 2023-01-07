@@ -9,4 +9,17 @@ Some tools I need for my VLSI career
 - Steps to use:
   - Alias `ulr` as `$MYLOG/uvm_log_reader/uvm_log_reader.bash`
 
+### memcd
+- Memorize the directories that the user has visited
+- Steps to use:
+  - Alias `mcd` as `source $MYTOOL/memcd/memcd.bash`
+- Some aliases you should have:
+```
+alias cs="mcd -sl"
+alias cb="mcd -bsl"
+alias cc="mcd -c"
+alias q="mcd -l ../"
+alias qq="q; q"
+alias qqq="q; q; q"
+```
 

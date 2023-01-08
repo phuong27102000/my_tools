@@ -76,6 +76,9 @@ sub loadDB {
 	my %database = ();
 	my @line_word = ();
 
+	unless( -e $filename ) { system("touch $filename"); }
+	if( -z $filename ) {return 0;}
+
 	open( my $in, "<", $filename ) or die "[ERROR] Can't open $filename";
 	if( $this->{debug} ) {
 		print "[INFO] ", "Loading database...\n";

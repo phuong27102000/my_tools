@@ -19,7 +19,7 @@ alias cs="mcd -sl"
 alias cb="mcd -bsl"
 alias cc="mcd -c"
 alias q="mcd -l ../"
-alias qq="q; q"
-alias qqq="q; q; q"
+alias qq="mcd -l ../../"
+alias qqq="mcd -l ../../../"
 ```
 

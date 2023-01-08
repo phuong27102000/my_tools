@@ -129,9 +129,14 @@ sub getCommandLineArgument {
 	$opt->{help} = delete $opt->{h};
 	$opt->{bias} = delete $opt->{b};
 
+	# foreach( keys %$opt) {
+	# 	print $_, ": ", $opt->{$_}, "\n";
+	# }
+	# print "============================================\n";
+
 	# &checkForFatalOptionErrors();
 
-	unless( -e $opt->{path} ) {
+	unless( -e $opt->{path}  or $opt->{rmv} ) {
     print color('bold red'), "[ERROR] ", color('reset'), "Can't find $opt->{path}\n";
 		exit(1);
 	}
@@ -147,7 +152,8 @@ sub loadDatabase {
 
 sub processPath {
 	$opt->{path} = abs_path($opt->{path});
-	unless( chdir $opt->{path} ) {
+	unless( $opt->{path} =~ /\/\$/ ) { $opt->{path} .= "/"; }
+	unless( chdir $opt->{path} or $opt->{rmv} ) {
     print color('bold red'), "[ERROR] ", color('reset'), "Can't change directory to $opt->{path}\n";
 		exit(1);
 	}
@@ -174,6 +180,8 @@ sub processClue {
 	if( $opt->{clue} > 0 ) {
 		my $header = "\n -> ";
 		my $i = 0;
+		$opt->{clue} = @$path_arr if( @$path_arr < $opt->{clue} );
+		$i = 6 - $opt->{clue} if( $opt->{clue} < 6 );
 		print "Some of your frequently visited directory:";
 		foreach( @$path_arr ) {
 			switch( $i ) {
@@ -183,11 +191,11 @@ sub processClue {
 				case 3 { print color('bright_blue'); }
 				case 4 { print color('bright_magenta'); }
 				case 5 { print color('bright_red'); }
-				else   { print color('reset'); }
+				else   { print color('bright_black'); }
 			}
 			print $header, $_;
 			$i ++;
-			if( $i == $opt->{clue} ) { last; }
+			if( $i >= 6 and $i >= $opt->{clue} ) { last; }
 		}
 		print color('reset');
 		print "\n"

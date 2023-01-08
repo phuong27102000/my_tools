@@ -11,15 +11,28 @@ Some tools I need for my VLSI career
 
 ### memcd
 - Memorize the directories that the user has visited
-- Steps to use:
-  - Alias `mcd` as `source $MYTOOL/memcd/memcd.bash`
-- Some aliases you should have:
-```
-alias cs="mcd -sl"
-alias cb="mcd -bsl"
-alias cc="mcd -c"
-alias q="mcd -l ../"
-alias qq="mcd -l ../../"
-alias qqq="mcd -l ../../../"
-```
+- For Bash OS users:
+  - Steps to use:
+    - Alias `mcd` as `source $MYTOOL/memcd/memcd.bash`
+  - Some aliases you should have:
+  ```
+  alias cs="mcd -sl"
+  alias cb="mcd -bsl"
+  alias cc="mcd -c"
+  alias q="mcd -l ../"
+  alias qq="mcd -l ../../"
+  alias qqq="mcd -l ../../../"
+  ```
 
+- For Cshell OS users:
+  - Steps to use:
+    - Alias `mcd` as `source $MYTOOL/memcd/memcd.csh`
+  - Some aliases you should have:
+  ```
+  alias cs  "mcd -sl"
+  alias cb  "mcd -bsl"
+  alias cc  "mcd -c"
+  alias q   "mcd -l ../"
+  alias qq  "mcd -l ../../"
+  alias qqq "mcd -l ../../../"
+  ```

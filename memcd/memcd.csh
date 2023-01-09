@@ -29,8 +29,10 @@ if ( "null$option_c" != "null" ) then
   memcd $option $non_option;
 else
   memcd $option -p $non_option;
-  if ( ( ! -z $non_option ) && ( -d $non_option ) ) then
-    cd $non_option;
+  if ( "null$non_option" != "null" ) 
+    if ( -d $non_option ) then
+      cd $non_option;
+    endif
   endif
 endif
 echo "============================================"

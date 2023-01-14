@@ -13,7 +13,6 @@ use FindBin qw($RealBin);
 use lib "$RealBin/objects";
 
 use Cwd qw(abs_path);
-use Switch;
 use Getopt::Std;
 
 use Term::ANSIColor;
@@ -184,15 +183,13 @@ sub processClue {
 		$i = 6 - $opt->{clue} if( $opt->{clue} < 6 );
 		print "Some of your frequently visited directory:";
 		foreach( @$path_arr ) {
-			switch( $i ) {
-				case 0 { print color('bright_yellow'); }
-				case 1 { print color('bright_green'); }
-				case 2 { print color('bright_cyan'); }
-				case 3 { print color('bright_blue'); }
-				case 4 { print color('bright_magenta'); }
-				case 5 { print color('bright_red'); }
-				else   { print color('bright_black'); }
-			}
+			if ( $i == 0 )      { print color('bright_yellow'); }
+			elsif ( $i == 1 )   { print color('bright_green'); }
+			elsif ( $i == 2 )   { print color('bright_cyan'); }
+			elsif ( $i == 3 )   { print color('bright_blue'); }
+			elsif ( $i == 4 )   { print color('bright_magenta'); }
+			elsif ( $i == 5 )   { print color('bright_red'); }
+			else                { print color('bright_black'); }
 			print $header, $_;
 			$i ++;
 			if( $i >= 6 and $i >= $opt->{clue} ) { last; }
@@ -204,12 +201,10 @@ sub processClue {
 
 sub processList {
 	my $listOpt = "$opt->{list}" . "$opt->{all}" . "$opt->{long}";
-	switch( $listOpt ) {
-		case "100" { system( "ls" ) };
-		case "101" { system( "ls -l" ) };
-		case "110" { system( "ls -a" ) };
-		case "111" { system( "ls -al" ) };
-	}
+  if(    $listOpt == "100" ) { system( "ls" ); }
+  elsif( $listOpt == "101" ) { system( "ls -l" ); }
+  elsif( $listOpt == "110" ) { system( "ls -a" ); }
+  elsif( $listOpt == "111" ) { system( "ls -al" ); }
 }
 
 sub processDB {

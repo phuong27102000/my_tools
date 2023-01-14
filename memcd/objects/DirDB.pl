@@ -118,7 +118,7 @@ sub cutDownDB {
 	my $offset = 0;
 	my @ret_path_arr = ();
 
-	if( @$path_arr > $this->{DBLimit} ) {
+	if( @$path_arr > $this->{DBlimit} ) {
 		$offset = @$path_arr - $this->{DBlimit};
 		@ret_path_arr = @{$path_arr}[$offset..$#$path_arr];
 	}

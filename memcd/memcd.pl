@@ -68,6 +68,7 @@ my $db_file = "$RealBin/memcd.db";
 &processPath();
 &processRemove();
 &processSave();
+&processDB();
 &processClue();
 #&processList(); # Currently removed because of no color bug
 exit(0);
@@ -186,7 +187,6 @@ sub processSave {
 			$dir_db->addPathToDB( $opt->{path}, ("-") );
 		}
 	}
-	&processDB();
 }
 
 sub processRemove {
@@ -243,7 +243,7 @@ sub processDB {
 	unless( $dir_db->checkLengthDB() ) {
 		$path_arr = $dir_db->cutDownDB($path_arr);
 	}
-  &saveDatabase($path_arr);
+  &saveDatabase();
 }
 
 sub checkForFatalOptionErrors {
@@ -267,8 +267,7 @@ sub checkForFatalOptionErrors {
 }
 
 sub saveDatabase {
-	if( $opt->{save} ) {
-    my $path_arr = shift;
+	if( $opt->{save} or $opt->{rmv}) {
 	  $dir_db->saveDB($db_file, $path_arr);
   }
 }

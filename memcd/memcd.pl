@@ -29,6 +29,12 @@ my $DBlimit = 20;
 # Set this variable to 0/1 for normal/debug mode
 my $debug = 0;
 
+# The number of successive times this path has not been chose
+my $forgotten_times = 5;
+
+# Be at least a number of call time to be in the forgotten list
+my $forgotten_thres = 3;
+
 # Directory database object
 my $dir_db;
 
@@ -43,6 +49,7 @@ my %opt_def = ( p => ["./", "./"], # path, can be defined with a value
                 b => [0, 1],       # bias
                 r => [0, 1],       # rmv
                 h => [0, 1],       # help
+                m => [0, 1],       # machine
               );
 
 # Command line options - real value
@@ -102,7 +109,7 @@ exit(0);
 #     ___ Print a small user guide then exit
 # ==================================================
 sub getCommandLineArgument {
-	my @option_arr = ('a', 'b', 'c', 'g', 'h', 'l', 'p' ,'r', 's');
+	my @option_arr = ('a', 'b', 'c', 'g', 'h', 'l', 'p' ,'r', 's', 'm');
 	my @arg_arr = ('c', 'p');
 
 	foreach( @option_arr ) {
@@ -128,6 +135,7 @@ sub getCommandLineArgument {
 	$opt->{rmv}  = delete $opt->{r};
 	$opt->{help} = delete $opt->{h};
 	$opt->{bias} = delete $opt->{b};
+	$opt->{mach} = delete $opt->{m};
 
 	# foreach( keys %$opt) {
 	# 	print $_, ": ", $opt->{$_}, "\n";
@@ -136,23 +144,34 @@ sub getCommandLineArgument {
 
 	# &checkForFatalOptionErrors();
 
-	unless( -e $opt->{path}  or $opt->{rmv} ) {
-    print color('bold red'), "[ERROR] ", color('reset'), "Can't find $opt->{path}\n";
-		exit(1);
-	}
-
 }
 
 sub loadDatabase {
 	$dir_db = DirDB->new( DBlimit => $DBlimit,
-												debug   => $debug
+												debug   => $debug,
+                        forgotten_times => $forgotten_times,
+                        forgotten_thres => $forgotten_thres
 												);
 	$dir_db->loadDB($db_file);
 }
 
 sub processPath {
+  if( $opt->{path} =~ /__(\d)__/ ) {
+	  $path_arr = $dir_db->sortDB();
+    $opt->{path} = @$path_arr[$1];
+  }
+  if( $opt->{mach} ) {
+    print $opt->{path};
+    exit 1;
+  }
 	$opt->{path} = abs_path($opt->{path});
 	unless( $opt->{path} =~ /\/\$/ ) { $opt->{path} .= "/"; }
+
+	unless( -e $opt->{path} or $opt->{rmv} ) {
+    print color('bold red'), "[ERROR] ", color('reset'), "Can't find $opt->{path}\n";
+		exit(1);
+	}
+
 	unless( chdir $opt->{path} or $opt->{rmv} ) {
     print color('bold red'), "[ERROR] ", color('reset'), "Can't change directory to $opt->{path}\n";
 		exit(1);
@@ -178,11 +197,12 @@ sub processRemove {
 
 sub processClue {
 	if( $opt->{clue} > 0 ) {
-		my $header = "\n -> ";
+		my $header = "\n";
 		my $i = 0;
 		$opt->{clue} = @$path_arr if( @$path_arr < $opt->{clue} );
 		$i = 6 - $opt->{clue} if( $opt->{clue} < 6 );
-		print "Some of your frequently visited directory:";
+    my $start = $i - 1;
+		print "Your most frequently visited directory:";
 		foreach( @$path_arr ) {
 			switch( $i ) {
 				case 0 { print color('bright_yellow'); }
@@ -193,7 +213,7 @@ sub processClue {
 				case 5 { print color('bright_red'); }
 				else   { print color('bright_black'); }
 			}
-			print $header, $_;
+			print $header, "|__", $i - $start, "__| ", $_;
 			$i ++;
 			if( $i >= 6 and $i >= $opt->{clue} ) { last; }
 		}

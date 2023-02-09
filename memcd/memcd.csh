@@ -29,9 +29,18 @@ if ( "null$option_c" != "null" ) then
   memcd $option $non_option;
 else
   memcd $option -p $non_option;
-  if ( "null$non_option" != "null" ) 
-    if ( -d $non_option ) then
+  if ( "null$non_option" != "null" ) then 
+    if ( -d "$non_option" ) then
       cd $non_option;
+    else
+      set the_path_to_cd=`memcd -m -p $non_option`
+      if ( "null$the_path_to_cd" != "null" ) then
+        if ( -d $the_path_to_cd ) then
+          cd $the_path_to_cd;
+        else
+          set option=`echo "$option" | tr -d "l"` 
+        endif
+      endif
     endif
   endif
 endif

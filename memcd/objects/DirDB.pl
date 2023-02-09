@@ -31,6 +31,12 @@ my $DBlimit_def = 20;
 # Default: non-debug mode
 my $debug_def   = 0;
 
+# Default: The number of successive times this path has not been chose
+my $forgotten_times_def = 5;
+
+# Default: Be at least a number of call time to be in the forgotten list
+my $forgotten_thres_def = 3;
+
 # ==================================================
 # Subroutines
 # *** new
@@ -64,8 +70,10 @@ sub new {
 	my $this = \%args;
 	bless $this, $class;
 
-	$this->{DBlimit} = $DBlimit_def unless( defined $this->{DBlimit} );
-	$this->{debug}   = $debug_def   unless( defined $this->{debug} );
+	$this->{DBlimit}         = $DBlimit_def         unless( defined $this->{DBlimit} );
+	$this->{debug}           = $debug_def           unless( defined $this->{debug} );
+	$this->{forgotten_times} = $forgotten_times_def unless( defined $this->{forgotten_times} );
+	$this->{forgotten_thres} = $forgotten_thres_def unless( defined $this->{forgotten_thres} );
 
 	return $this;
 }
@@ -150,12 +158,17 @@ sub sortDB {
 									}
 								} keys %{$this->{DB}} ) {
 		$path_arr[@path_arr] = $_;
-		$smallest = $this->{DB}->{$_}->[0] if( $smallest > $this->{DB}->{$_}->[0] ) ;
+		# $smallest = $this->{DB}->{$_}->[0] if( $smallest > $this->{DB}->{$_}->[0] ) ;
 	}
 
-	foreach( 0..$#path_arr ) {
-		$this->{DB}->{$path_arr[$_]}->[0] -= $smallest;
-	}
+  foreach( 0..$#path_arr ) {
+    # $this->{DB}->{$path_arr[$_]}->[0] -= $smallest;
+    $this->{DB}->{$path_arr[$_]}->[2] ++;
+    unless ( $this->{DB}->{$path_arr[$_]}->[2] < $this->{forgotten_times} ) {
+      $this->{DB}->{$path_arr[$_]}->[0] -- unless( $this->{DB}->{$path_arr[$_]}->[0] < $this->{forgotten_thres} );
+      $this->{DB}->{$path_arr[$_]}->[2] = 0;
+    }
+  }
 
 	return \@path_arr;
 }
@@ -175,7 +188,11 @@ sub addPathToDB {
 	my $i = 1;
 	foreach( @arg ) {
 		$this->{DB}->{$path}->[$i] = $_;
+    $i ++;
 	}
+
+  # Forgotten times starts at 0
+	$this->{DB}->{$path}->[$i] = $_;
 }
 
 sub removePath {

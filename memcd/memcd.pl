@@ -163,18 +163,20 @@ sub processPath {
     print $opt->{path};
     exit 1;
   }
-	$opt->{path} = abs_path($opt->{path});
-	unless( $opt->{path} =~ /\/\$/ ) { $opt->{path} .= "/"; }
+	my $absp = abs_path($opt->{path});
+	unless( $absp =~ /\/\$/ ) { $absp .= "/"; }
 
-	unless( -e $opt->{path} or $opt->{rmv} ) {
+	unless( -e $absp or $opt->{rmv} ) {
     print color('bold red'), "[ERROR] ", color('reset'), "Can't find $opt->{path}\n";
 		exit(1);
 	}
 
-	unless( chdir $opt->{path} or $opt->{rmv} ) {
+	unless( chdir $absp or $opt->{rmv} ) {
     print color('bold red'), "[ERROR] ", color('reset'), "Can't change directory to $opt->{path}\n";
 		exit(1);
 	}
+
+  $opt->{path} = $absp;
 }
 
 sub processSave {

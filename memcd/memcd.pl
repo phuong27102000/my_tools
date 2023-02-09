@@ -157,7 +157,7 @@ sub loadDatabase {
 sub processPath {
   if( $opt->{path} =~ /__(\d)__/ ) {
 	  $path_arr = $dir_db->sortDB();
-    $opt->{path} = @$path_arr[$1];
+    $opt->{path} = @$path_arr[$1-1];
   }
   if( $opt->{mach} ) {
     print $opt->{path};
@@ -222,10 +222,10 @@ sub processClue {
 
 sub processList {
 	my $listOpt = "$opt->{list}" . "$opt->{all}" . "$opt->{long}";
-	if(    $listOpt =~ /^100$/ ) { system( "ls" ) };
-	elsif( $listOpt =~ /^101$/ ) { system( "ls -l" ) };
-	elsif( $listOpt =~ /^110$/ ) { system( "ls -a" ) };
-	elsif( $listOpt =~ /^111$/ ) { system( "ls -al" ) };
+	if(    $listOpt =~ /^100$/ ) { system( "ls" ); }
+	elsif( $listOpt =~ /^101$/ ) { system( "ls -l" ); }
+	elsif( $listOpt =~ /^110$/ ) { system( "ls -a" ); }
+	elsif( $listOpt =~ /^111$/ ) { system( "ls -al" ); }
 }
 
 sub processDB {

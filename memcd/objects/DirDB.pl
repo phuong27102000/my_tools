@@ -56,6 +56,8 @@ my $forgotten_thres_def = 3;
 #     ___ Add the new/old path to the database
 # *** removePath: i - $path
 #     ___ Remove the old path from the database
+# *** forgetPath: i - $path_arr
+#     ___ Forget a path if it has not been used for a while
 # *** checkLengthDB: o - TRUE/FALSE
 #     ___ Check if the database size is proper
 # *** getDBSize: o - $len
@@ -109,10 +111,13 @@ sub loadDB {
 sub saveDB {
 	my $this = shift;
 	my $filename = shift;
+  my $path_arr = shift;
+
+  $path_arr = keys %{$this->{DB}} unless( defined $path_arr );
 
 	open( my $out, ">", $filename ) or die "[ERROR] Can't open $filename";
 
-	foreach( keys %{$this->{DB}} ) {
+	foreach( @{$path_arr} ) {
 		my $separator = $";
 		$" = " :: ";
 		print $out "$_ :: @{$this->{DB}->{$_}}" . "\n";
@@ -144,11 +149,14 @@ sub cutDownDB {
 sub sortDB {
 	my $this = shift;
 	my @path_arr = ();
-	my $smallest = 0;
 
 	foreach( sort {
 									if( $this->{DB}->{$b}->[1] eq $this->{DB}->{$a}->[1] ) {
-										$this->{DB}->{$b}->[0] <=> $this->{DB}->{$a}->[0]
+                    if( $this->{DB}->{$b}->[0] == $this->{DB}->{$a}->[0] ) {
+                      $b cmp $a;
+                    } else {
+										  $this->{DB}->{$b}->[0] <=> $this->{DB}->{$a}->[0];
+                    }
 									} else {
 										if( $this->{DB}->{$b}->[1] eq "preferred" ) {
 											1;
@@ -158,17 +166,7 @@ sub sortDB {
 									}
 								} keys %{$this->{DB}} ) {
 		$path_arr[@path_arr] = $_;
-		# $smallest = $this->{DB}->{$_}->[0] if( $smallest > $this->{DB}->{$_}->[0] ) ;
 	}
-
-  foreach( 0..$#path_arr ) {
-    # $this->{DB}->{$path_arr[$_]}->[0] -= $smallest;
-    $this->{DB}->{$path_arr[$_]}->[2] ++;
-    unless ( $this->{DB}->{$path_arr[$_]}->[2] < $this->{forgotten_times} ) {
-      $this->{DB}->{$path_arr[$_]}->[0] -- unless( $this->{DB}->{$path_arr[$_]}->[0] < $this->{forgotten_thres} );
-      $this->{DB}->{$path_arr[$_]}->[2] = 0;
-    }
-  }
 
 	return \@path_arr;
 }
@@ -203,6 +201,21 @@ sub removePath {
 	if( defined $this->{DB}->{$path} ) {
 		delete( $this->{DB}->{$path} ) ;
 	}
+}
+
+sub forgetPath {
+	my $this = shift;
+	my $path_arr = shift;
+  my @arr = @$path_arr;
+
+  foreach( 0..$#arr ) {
+    $this->{DB}->{$arr[$_]}->[2] ++;
+    unless ( $this->{DB}->{$arr[$_]}->[2] < $this->{forgotten_times} ) {
+      $this->{DB}->{$arr[$_]}->[0] -- unless( $this->{DB}->{$arr[$_]}->[0] < $this->{forgotten_thres} );
+      $this->{DB}->{$arr[$_]}->[2] = 0;
+    }
+  }
+
 }
 
 sub checkLengthDB {

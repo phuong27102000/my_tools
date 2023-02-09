@@ -28,12 +28,12 @@ set option_c=`echo "$option" | grep -oP "c"`
 if ( "null$option_c" != "null" ) then
   memcd $option $non_option;
 else
+  set the_path_to_cd=`memcd -m -p $non_option`
   memcd $option -p $non_option;
   if ( "null$non_option" != "null" ) then 
     if ( -d "$non_option" ) then
       cd $non_option;
     else
-      set the_path_to_cd=`memcd -m -p $non_option`
       if ( "null$the_path_to_cd" != "null" ) then
         if ( -d $the_path_to_cd ) then
           cd $the_path_to_cd;

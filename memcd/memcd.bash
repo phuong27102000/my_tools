@@ -27,11 +27,11 @@ option=$(echo "$args" | grep -oP "$option_regex" | tr "\n" " ");
 if [[ $option =~ 'c' ]]; then
   memcd $option $non_option;
 else
+  the_path_to_cd=$(memcd -m -p $non_option);
   memcd $option -p $non_option;
   if [[ ! -z $non_option ]] && [[ -d $non_option ]]; then
     cd $non_option;
   else
-    the_path_to_cd=$(memcd -m -p $non_option);
     if [[ ! -z $the_path_to_cd ]] && [[ -d $the_path_to_cd ]]; then
       cd $the_path_to_cd;
     else

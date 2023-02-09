@@ -70,7 +70,6 @@ my $db_file = "$RealBin/memcd.db";
 &processSave();
 &processClue();
 #&processList(); # Currently removed because of no color bug
-&saveDatabase();
 exit(0);
 
 # ==================================================
@@ -237,9 +236,14 @@ sub processDB {
 		print "[INFO] ", "Finish sorting\n";
 	}
 
+	if( $opt->{save} ) {
+	  $dir_db->forgetPath( $path_arr );
+  }
+
 	unless( $dir_db->checkLengthDB() ) {
 		$path_arr = $dir_db->cutDownDB($path_arr);
 	}
+  &saveDatabase($path_arr);
 }
 
 sub checkForFatalOptionErrors {
@@ -263,7 +267,10 @@ sub checkForFatalOptionErrors {
 }
 
 sub saveDatabase {
-	$dir_db->saveDB($db_file);
+	if( $opt->{save} ) {
+    my $path_arr = shift;
+	  $dir_db->saveDB($db_file, $path_arr);
+  }
 }
 
 sub getHelp {
